@@ -8,7 +8,7 @@
     <string name="_4">4</string>
     <string name="_5">5</string>
     <string name="_6">6</string>
-    <string name="multioly">\u00d7</string>
+    <string name="multiple">\u00d7</string>
     <string name="_1">1</string>
     <string name="_2">2</string>
     <string name="_3">3</string>
@@ -20,7 +20,7 @@
     <string name="dot">.</string>
     <string name="c">C</string>
     <string name="pm">+/-</string>
-    <string name="percen">%</string>
-    <string name="devide">\u00f7</string>
+    <string name="percent">%</string>
+    <string name="divide">\u00f7</string>
     <string name="ac">AC</string>
 </resources>

@@ -1,125 +1,172 @@
 package com.example.mycalculator
 
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.style.BackgroundColorSpan
+import android.view.GestureDetector
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.mycalculator.databinding.ActivityMainBinding
-import java.lang.ArithmeticException
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
-    private var tvInput: TextView? = null
-    private var ButtonC: TextView? = null
+    // textview
+    private var textViewInput: TextView? = null
+    // button
+    private var ButtonC: Button? = null
+    // check
     var lastNumeric : Boolean = false
-    val myList = mutableListOf<String>()
     var lastDot : Boolean = false
-    var checker : Boolean = true
+    var checkerFirst : Boolean = true
+    var firstInt: Boolean = false
+    var tempView: View? = null
+    var checkView: View? = null
+    var check: View? = null
+    // calculate
+    var main : String = ""
+    var oper : String = ""
+    var second : String = ""
+    // bucket
+    var bucketOne : String = ""
+    // GesterDetector
+    private var gestureDetector: GestureDetector? = null
+
+
+    var decimalFormat: DecimalFormat = DecimalFormat("#,###.##")
 
     private val binding: ActivityMainBinding by lazy{
         ActivityMainBinding.inflate(layoutInflater)}
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        tvInput = binding.tvInput
-        ButtonC = binding.c
+        textViewInput = binding.tvInput
+        ButtonC = binding.clean
     }
 
     fun onDigit(view: View){
-        if(!checker){
-            tvInput?.text = ""
-            checker = true
+        check = view
+        if(!checkerFirst){
+            textViewInput?.setText("")
+            checkerFirst = true
+            (tempView as Button).setTextColor(Color.WHITE)
+            tempView?.setBackgroundColor(resources.getColor(R.color.orange))
         }
-        tvInput?.append((view as Button).text)
+        var digit = (check as Button).getText().toString()
+        bucketOne += digit
+        textViewInput?.setText(onFormat(bucketOne))
         ButtonC?.setText("C")
         lastNumeric = true
         lastDot = false
+        //        bucketOne = bucketOne + tvInput?.append((view as Button).text)
+//        Toast.makeText(getApplicationContext(),bucketOne,Toast.LENGTH_SHORT).show();
+//        textView2Input?.append((view as Button).text)
+//        textViewInput?.append(bucketOne)
+//        textViewInput?.append((view as Button).text)
+        //        tvInput?.append((view as Button).text)
     }
-    fun onPM(view: View){
-        val tvValue = tvInput?.text.toString()
+
+
+    fun onPlusMinus(view: View){
+        val tvValue = textViewInput?.text.toString()
         val calPM = (tvValue.toDouble() *-1).toString()
-        tvInput?.setText(removeZeroAfterDot(calPM))
+        textViewInput?.setText(removeZeroAfterDot(calPM))
     }
-    fun onPer(view:View){
-        val tvValue = tvInput?.text.toString()
+    fun onPercent(view:View){
+        val tvValue = textViewInput?.text.toString()
         val calPM = (tvValue.toDouble() /100).toString()
-        tvInput?.text = calPM
+        textViewInput?.text = calPM
     }
     fun onClear(view: View){
-        tvInput?.text = ""
+        textViewInput?.text = ""
         ButtonC?.setText("AC")
+        bucketOne = ""
+        tempView?.setBackgroundColor(resources.getColor(R.color.orange))
     }
     fun onDecimalPoint(view:View){
+        var textView = textViewInput?.text
         if(lastNumeric && !lastDot){
-            tvInput?.append(".")
+            if(textView?.contains('.') == false){
+                textViewInput?.append(".")
+                bucketOne += "."
+                lastNumeric = false
+                lastDot = true
+            }
+        }
+        if(textView?.length == 0){
+            textViewInput?.append("0.")
+            bucketOne += "0."
             lastNumeric = false
             lastDot = true
         }
+
     }
     fun onEqual(view:View){
-        myList.add(tvInput!!.text.toString())
+        second = textViewInput!!.text.toString()
         if(lastNumeric){
-            var tvValue = tvInput?.text.toString()
             var prefix = ""
             try {
-                if(tvValue.startsWith("-")){
+                if(main.startsWith("-")){
                     prefix = "-"
-                    tvValue = tvValue.substring(1)
+                    main = main.substring(1)
                 }
-                if(tvValue.contains("-")){
-                    val splitValue = tvValue.split("-")
-                    var one = splitValue[0]
-                    var two = splitValue[1]
-
+                if(oper == "-"){
                     if(prefix.isNotEmpty()){
-                        one = prefix + one
+                        main = prefix + main
                     }
-                    tvInput?.text = removeZeroAfterDot((one.toDouble() - two.toDouble()).toString())
-                }else if (tvValue.contains("+")){
-                    val splitValue = tvValue.split("+")
-                    var one = splitValue[0]
-                    var two = splitValue[1]
-
+                    textViewInput?.text = removeZeroAfterDot((main.toDouble() - second.toDouble()).toString())
+                }
+                if(oper == "+"){
                     if(prefix.isNotEmpty()){
-                        one = prefix + one
+                        main = prefix + main
                     }
-                    tvInput?.text = removeZeroAfterDot((one.toDouble() + two.toDouble()).toString())}
-                else if (tvValue.contains("\u00f7")){
-                    val splitValue = tvValue.split("\u00f7")
-                    var one = splitValue[0]
-                    var two = splitValue[1]
+                    textViewInput?.text = removeZeroAfterDot((main.toDouble() + second.toDouble()).toString())
+                }
+                if(oper == "\u00d7"){
                     if(prefix.isNotEmpty()){
-                        one = prefix + one
+                        main = prefix + main
                     }
-                    tvInput?.text = removeZeroAfterDot((one.toDouble() / two.toDouble()).toString())}
-                else if (tvValue.contains("\u00d7")){
-                    val splitValue = tvValue.split("\u00d7")
-                    var one = splitValue[0]
-                    var two = splitValue[1]
-
+                    textViewInput?.text = removeZeroAfterDot((main.toDouble() * second.toDouble()).toString())
+                }
+                if(oper == "\u00f7"){
                     if(prefix.isNotEmpty()){
-                        one = prefix + one
+                        main = prefix + main
                     }
-                    tvInput?.text = removeZeroAfterDot((one.toDouble() * two.toDouble()).toString())}
-
+                    textViewInput?.text = removeZeroAfterDot((main.toDouble() / second.toDouble()).toString())
+                }
             }catch(e: ArithmeticException){
                 e.printStackTrace()
             }
         }
     }
-    fun onOperator(view:View){
-        tvInput?.text?.let{
-            if(lastNumeric && !isOperatorAdded(it.toString())){
-                tvInput?.append((view as Button).text)
-                lastNumeric = false
-                lastDot = false
-                checker = false
-                myList.add(tvInput!!.text.toString())
-                view.setBackgroundColor(Color.WHITE)
 
+    fun onOperator(view:View){
+        textViewInput?.text?.let{
+            if(firstInt){
+                if(lastNumeric && !isOperatorAdded(it.toString())){
+                    tempView = view
+                    if (tempView is Button) {
+                        (tempView as Button).setTextColor(resources.getColor(R.color.orange))
+                        tempView?.setBackgroundColor(Color.WHITE)
+                    }
+                    lastNumeric = false
+                    lastDot = false
+                    checkerFirst = false
+                    main = textViewInput!!.text.toString()
+                    oper = (tempView as Button).getText().toString()
+                    bucketOne = ""
+
+                }
+            } else {
+                checkView = view
+                var data = (checkView as Button).getText().toString()
+                if( data == "-"){
+                    textViewInput?.append("-")
+                }
+                firstInt = true
             }
         }
     }
@@ -135,5 +182,11 @@ class MainActivity : AppCompatActivity() {
         if(result.contains(".0"))
             value = result.substring(0,result.length-2)
         return value
+    }
+
+    private fun onFormat(result: String): String {
+        val change = result.toDouble()
+        val numberFormat = NumberFormat.getNumberInstance(Locale.US)
+        return numberFormat.format(change)
     }
 }
