@@ -30,8 +30,8 @@
                 android:layout_height= "wrap_content"
                 android:layout_gravity="bottom"
                 android:padding="10dp"
-                android:textSize="48sp"
-                android:text="@string/calc_text"
+                android:textSize="64sp"
+                android:textColor="@color/white"
                 android:gravity="end|bottom"
                 />
 
