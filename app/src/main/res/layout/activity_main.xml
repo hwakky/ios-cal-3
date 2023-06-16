@@ -10,39 +10,35 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
+        android:layout_height="280dp"
+        android:orientation="vertical">
+        <EditText
+            android:id="@+id/textViewInputTwo"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tvInput"
-                android:layout_width="match_parent"
-                android:layout_height= "wrap_content"
-                android:layout_gravity="bottom"
-                android:padding="10dp"
-                android:textSize="64sp"
-                android:textColor="@color/white"
-                android:gravity="end|bottom"
-                />
-
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@android:color/transparent"
+            android:gravity="end|bottom"
+            android:padding="10dp"
+            android:textColor="@color/white"
+            android:textSize="64sp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <EditText
+            android:id="@+id/textViewInput"
+            android:layout_width="match_parent"
+            android:layout_height= "wrap_content"
+            android:layout_gravity="bottom"
+            android:padding="10dp"
+            android:textSize="64sp"
+            android:background="@android:color/transparent"
+            android:textColor="@color/white"
+            android:gravity="end|bottom"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/con1"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,11 +63,11 @@
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/ac"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="24sp"
+                android:onClick="onClear"
                 android:backgroundTint="@color/light_grey"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:onClick="onClear"
                 tools:layout_editor_absoluteY="0dp" />
             <View
                 android:layout_width="0dp"
@@ -84,10 +80,10 @@
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/pm"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="24sp"
-                android:backgroundTint="@color/light_grey"
                 android:onClick="onPlusMinus"
+                android:backgroundTint="@color/light_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:layout_editor_absoluteY="0dp" />
             <View
@@ -96,15 +92,15 @@
                 android:layout_weight="1" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/percent"
+                android:id="@+id/percen"
                 android:layout_width="80dp"
                 android:layout_height="90dp"
                 android:layout_weight="1"
-                android:textColor="@color/black"
                 android:text="@string/percent"
+                android:textColor="@color/white"
                 android:textSize="32sp"
-                android:backgroundTint="@color/light_grey"
                 android:onClick="onPercent"
+                android:backgroundTint="@color/light_grey"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:layout_editor_absoluteY="0dp" />
             <View
@@ -113,18 +109,17 @@
                 android:layout_weight="1" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/divide"
+                android:id="@+id/devide"
                 android:layout_width="80dp"
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/divide"
-                android:textColor="@color/white"
                 android:textSize="32sp"
-                android:backgroundTint="@color/orange"
+                android:textColor="@color/white"
                 android:onClick="onOperator"
+                android:backgroundTint="@color/orange"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:layout_editor_absoluteY="0dp"
-                tools:ignore="UsingOnClickInXml" />
+                tools:layout_editor_absoluteY="0dp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -132,7 +127,6 @@
         android:id="@+id/con2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -155,13 +149,12 @@
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/_7"
-                android:textColor="@color/white"
                 android:textSize="28sp"
-                android:backgroundTint="@color/black2"
+                android:textColor="@color/white"
                 android:onClick="onDigit"
+                android:backgroundTint="@color/black2"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:layout_editor_absoluteY="0dp"
-                tools:ignore="UsingOnClickInXml" />
+                tools:layout_editor_absoluteY="0dp" />
             <View
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -173,10 +166,10 @@
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/_8"
-                android:textColor="@color/white"
                 android:textSize="28sp"
-                android:backgroundTint="@color/black2"
+                android:textColor="@color/white"
                 android:onClick="onDigit"
+                android:backgroundTint="@color/black2"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:layout_editor_absoluteY="0dp" />
             <View
@@ -190,10 +183,10 @@
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/_9"
-                android:textColor="@color/white"
                 android:textSize="32sp"
-                android:backgroundTint="@color/black2"
+                android:textColor="@color/white"
                 android:onClick="onDigit"
+                android:backgroundTint="@color/black2"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:layout_editor_absoluteY="0dp" />
             <View
@@ -209,19 +202,16 @@
                 android:text="@string/multiple"
                 android:textColor="@color/white"
                 android:textSize="32sp"
-                android:backgroundTint="@color/orange"
                 android:onClick="onOperator"
+                android:backgroundTint="@color/orange"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:layout_editor_absoluteY="0dp"
-                tools:ignore="UsingOnClickInXml" />
+                tools:layout_editor_absoluteY="0dp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/con3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -246,8 +236,8 @@
                 android:text="@string/_4"
                 android:textColor="@color/white"
                 android:textSize="28sp"
-                android:backgroundTint="@color/black2"
                 android:onClick="onDigit"
+                android:backgroundTint="@color/black2"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:layout_editor_absoluteY="0dp" />
             <View
@@ -261,10 +251,10 @@
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/_5"
-                android:textColor="@color/white"
                 android:textSize="28sp"
-                android:backgroundTint="@color/black2"
+                android:textColor="@color/white"
                 android:onClick="onDigit"
+                android:backgroundTint="@color/black2"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:layout_editor_absoluteY="0dp" />
             <View
@@ -278,10 +268,10 @@
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/_6"
-                android:textColor="@color/white"
                 android:textSize="32sp"
-                android:backgroundTint="@color/black2"
+                android:textColor="@color/white"
                 android:onClick="onDigit"
+                android:backgroundTint="@color/black2"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:layout_editor_absoluteY="0dp" />
             <View
@@ -295,21 +285,18 @@
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/minus"
-                android:textColor="@color/white"
                 android:textSize="32sp"
-                android:backgroundTint="@color/orange"
+                android:textColor="@color/white"
                 android:onClick="onOperator"
+                android:backgroundTint="@color/orange"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:layout_editor_absoluteY="0dp"
-                tools:ignore="UsingOnClickInXml" />
+                tools:layout_editor_absoluteY="0dp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/con4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -332,8 +319,8 @@
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/_1"
-                android:textColor="@color/white"
                 android:textSize="28sp"
+                android:textColor="@color/white"
                 android:backgroundTint="@color/black2"
                 android:onClick="onDigit"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -349,8 +336,8 @@
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/_2"
-                android:textColor="@color/white"
                 android:textSize="28sp"
+                android:textColor="@color/white"
                 android:backgroundTint="@color/black2"
                 android:onClick="onDigit"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -366,10 +353,10 @@
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/_3"
-                android:textColor="@color/white"
                 android:textSize="32sp"
-                android:backgroundTint="@color/black2"
+                android:textColor="@color/white"
                 android:onClick="onDigit"
+                android:backgroundTint="@color/black2"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:layout_editor_absoluteY="0dp" />
             <View
@@ -383,21 +370,18 @@
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/plus"
-                android:textColor="@color/white"
                 android:textSize="32sp"
+                android:textColor="@color/white"
                 android:onClick="onOperator"
                 android:backgroundTint="@color/orange"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:layout_editor_absoluteY="0dp"
-                tools:ignore="UsingOnClickInXml" />
+                tools:layout_editor_absoluteY="0dp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/con5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -416,16 +400,19 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/zero"
-                android:layout_width="170dp"
+                android:layout_width="80dp"
                 android:layout_height="90dp"
-                android:layout_weight="2"
+                android:layout_weight="15"
                 android:text="@string/_0"
-                android:textColor="@color/white"
+                android:textAlignment="textStart"
                 android:textSize="28sp"
-                android:backgroundTint="@color/black2"
+                android:textColor="@color/white"
                 android:onClick="onDigit"
+                android:backgroundTint="@color/black2"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:layout_editor_absoluteY="0dp" />
+
+
 
             <View
                 android:layout_width="0dp"
@@ -438,10 +425,10 @@
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/dot"
-                android:textColor="@color/white"
                 android:textSize="32sp"
-                android:backgroundTint="@color/black2"
+                android:textColor="@color/white"
                 android:onClick="onDecimalPoint"
+                android:backgroundTint="@color/black2"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:layout_editor_absoluteY="0dp" />
             <View
@@ -455,13 +442,12 @@
                 android:layout_height="90dp"
                 android:layout_weight="1"
                 android:text="@string/equal"
-                android:textColor="@color/white"
                 android:textSize="32sp"
+                android:textColor="@color/white"
+                android:onClick="onOperator"
                 android:backgroundTint="@color/orange"
-                android:onClick="onEqual"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:layout_editor_absoluteY="0dp"
-                tools:ignore="UsingOnClickInXml" />
+                tools:layout_editor_absoluteY="0dp" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

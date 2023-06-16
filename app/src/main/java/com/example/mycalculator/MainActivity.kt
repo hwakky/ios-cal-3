@@ -1,49 +1,45 @@
 package com.example.mycalculator
 
-import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.VelocityTracker
 import android.view.View
 import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
-import java.text.NumberFormat
-import java.util.Locale
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintSet.Motion
-import androidx.core.app.unusedapprestrictions.IUnusedAppRestrictionsBackportCallback.Default
-import androidx.core.view.GestureDetectorCompat
 import com.example.mycalculator.databinding.ActivityMainBinding
-import java.math.BigDecimal
 import java.text.DecimalFormat
+import kotlin.math.abs
 
 class MainActivity : AppCompatActivity(){
-    private var textViewInput: TextView? = null
+    private var textViewInput: EditText? = null
+    private var textViewInputTwo: EditText? = null
     private var ButtonClean: Button? = null
 
     // gesture detector
-    lateinit var gestureDetectorCompat : GestureDetector
+    private lateinit var gestureDetector: GestureDetector
     // view
-    var DigitView: View? = null
     var operatorView: View? = null
     var operatorViewCheckOne: View? = null
     var operatorViewCheckTwo: View? = null
     // container
-    var containerDigit: String = ""
     var operator: String = ""
-    var operatorCheckOne: String = ""
-    var operatorCheckTwo: String = ""
-    var main: String = ""
-    var second: String = ""
+    var operatorBox: String =""
+    var num1: String = ""
+    var num2: String = ""
+    var backUpNum2: String = ""
+    var clearOne: Int = 0
     // Boolean
     var haveDigit: Boolean = false
     var haveDot: Boolean = false
     var haveOperator: Boolean = false
     var firstOperator: Boolean = false
     var secondOperator: Boolean = true
+    var editText: Boolean = true
+    var checkFirst: Boolean = false
     // format
     val decimalFormat = DecimalFormat("#,##0.00000000")
 
@@ -54,147 +50,310 @@ class MainActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        textViewInput = binding.tvInput
+        textViewInput = binding.textViewInput
+        textViewInputTwo = binding.textViewInputTwo
         ButtonClean = binding.clean
-        if (!haveDigit) {
-            textViewInput?.setText("0")
+        binding.textViewInput.isCursorVisible = false
+        binding.textViewInput.isFocusable = false
+        textViewInput?.setText("0")
+
+        binding.textViewInput.setOnClickListener{
+            Log.e("ggez","hello")
         }
-//        gestureDetectorCompat = GestureDetectorCompat(this, object : GestureDetector.SimpleOnGestureListener(){
-//            override fun onFling(
-//                e1: MotionEvent,
-//                e2: MotionEvent,
-//                velocityX:Float,
-//                velocityY:Float): Boolean {
-//                val distanceX = e2.x-e1.x
-//                val detectorY = e2.y-e1.y
-//                val text = binding.tvInput
-//                if(kotlin.math.abs(distanceX) > kotlin.math.abs(detectorY)){
-//                    if(distanceX > 0) {
-//                        var current = containerDigit
-//                        if(current.isNotEmpty()){
-//                            containerDigit = current.dropLast(1)
-//                        }
-//                    }
-//                }
-//            }
-//            )
-//        })
+
+        //set 1
+        gestureDetector = GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onFling(
+                e1: MotionEvent,
+                e2: MotionEvent,
+                velocityX: Float,
+                velocityY: Float
+            ): Boolean {
+                if (e1 == null || e2 == null){
+                    return false
+                }
+                val distanceX = e2.x - e1.x
+                val distanceY = e2.y - e1.y
+                val text = binding.textViewInput.text
+                if (abs(distanceX) > abs(distanceY)) {
+                    // Horizontal swipe
+                    if (abs(distanceX) > SWIPE_THRESHOLD && abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                        Log.e("ggez",abs(distanceX).toString())
+
+                        if (distanceX > 0) {
+                            if (text.isNotEmpty()) {
+                                binding.textViewInput.setText(
+                                    text.subSequence(
+                                        0,
+                                        text.length - 1
+                                    )
+                                )
+                                binding.textViewInput.setSelection(text.length - 1)
+                                val lastChar = text.substring(text.length - 1)
+                                if (lastChar == "." && text.length > 2) {
+                                    haveDot = false
+                                    binding.textViewInput.setText(
+                                        text.subSequence(
+                                            0,
+                                            text.length - 2
+                                        )
+                                    )
+                                    binding.textViewInput.setSelection(text.length - 2)
+                                } else {
+                                    haveDot = false
+                                    binding.textViewInput.setText(
+                                        text.subSequence(
+                                            0,
+                                            text.length - 1
+                                        )
+                                    )
+                                    binding.textViewInput.setSelection(text.length - 1)
+                                }
+                                if(text.length ==1 ){
+                                    binding.textViewInput.setText("0")
+                                    editText = true
+                                }
+                            }
+                        } else {
+                            binding.textViewInput.setText(
+                                text.subSequence(
+                                    0,
+                                    text.length - 1
+                                )
+                            )
+                            binding.textViewInput.setSelection(text.length - 1)
+                            val lastChar = text.substring(text.length - 1)
+                            if (lastChar == "." && text.length > 2) {
+                                haveDot = false
+                                binding.textViewInput.setText(
+                                    text.subSequence(
+                                        0,
+                                        text.length - 2
+                                    )
+                                )
+                                binding.textViewInput.setSelection(text.length - 2)
+                            } else {
+                                haveDot = false
+                                binding.textViewInput.setText(
+                                    text.subSequence(
+                                        0,
+                                        text.length - 1
+                                    )
+                                )
+                                binding.textViewInput.setSelection(text.length - 1)
+                            }
+                            if(text.length ==1 ){
+                                binding.textViewInput.setText("0")
+                                editText = true
+                            }
+                        }
+                        return true
+                    }
+                }
+                return false
+            }
+        })
+        val slideEvent = binding.textViewInput
+        slideEvent.setOnTouchListener { y, event ->
+            gestureDetector.onTouchEvent(event)
+            false
+        }
     }
 
     fun onDigit(view: View) {
         haveDigit = true
-        if (!haveDot && containerDigit.length != 9) {
-            if (haveDigit) {
+        if(editText || haveOperator){
+            textViewInput?.setText("")
+        }
+        if (!haveDot && textViewInput?.getText()?.length != 9) {
+            if (haveDigit ) {
                 // contain input & display
-                DigitView = view
-                containerDigit += (DigitView as Button).getText().toString()
-                textViewInput?.setText(onFormat(containerDigit))
+                textViewInput?.append((view as Button).text)
                 // setButton Clear
                 ButtonClean?.setText("C")
                 if(haveOperator){
+                    changeButtonOperatorOne()
                     haveOperator = false
-                    (operatorView as Button).setTextColor(Color.WHITE)
-                    operatorView?.setBackgroundColor(resources.getColor(R.color.orange))
-                    Toast.makeText(getApplicationContext(),operator,Toast.LENGTH_SHORT).show();
                 }
+
+                editText = false
             }
-        } else if (haveDot && containerDigit.length != 10) {
+        } else if (haveDot && textViewInput?.getText()?.length != 10) {
             // contain input & display
-            DigitView = view
-            containerDigit += (DigitView as Button).getText().toString()
-            textViewInput?.setText(onFormat(containerDigit))
+            textViewInput?.append((view as Button).text)
+
             // setButton Clear
             ButtonClean?.setText("C")
             if(haveOperator){
                 haveOperator = false
-                (operatorView as Button).setTextColor(Color.WHITE)
-                operatorView?.setBackgroundColor(resources.getColor(R.color.orange))
+                changeButtonOperatorOne()
+            }
+            editText = false
+        }
+    }
+
+    fun onEqual(view:View){
+        if(num2 == ""){
+            num2 = textViewInput?.getText().toString()
+        }
+        backUpNum2 = num2
+        if(textViewInput?.getText().toString() != num1){
+            num2 = textViewInput?.getText().toString()
+            Log.e(TAG,textViewInput?.getText().toString())
+            Log.e(TAG,num1)
+        } else {
+            num2 = backUpNum2
+            Log.e(TAG,"eiei")
+        }
+
+        if(num1 != "" && num2 != ""){
+
+            val changeNum1 = num1.toDouble()
+            val changeNum2 = num2.toDouble()
+            if(!num1.contains(".") && !num2.contains(".")){
+                if(operator == "+"){
+                    val value = changeNum1 + changeNum2
+                    textViewInput?.setText(removeZeroAfterDot(value.toString()))
+                    num1 = removeZeroAfterDot(value.toString())
+                    operatorBox = operator
+                }
+                if(operator == "-"){
+                    val value = changeNum1 - changeNum2
+                    textViewInput?.setText(removeZeroAfterDot(value.toString()))
+                    num1 = removeZeroAfterDot(value.toString())
+                    operatorBox = operator
+                }
+                if(operator == "\u00d7"){
+                    val value = changeNum1 * changeNum2
+                    val format = decimalFormat.format(value)
+                    textViewInput?.setText(format)
+                    num1 = removeZeroAfterDot(value.toString())
+                    operatorBox = operator
+                }
+                if(operator == "\u00f7"){
+                    val value = changeNum1 / changeNum2
+                    val format = decimalFormat.format(value)
+                    textViewInput?.setText(format)
+                    num1 = removeZeroAfterDot(value.toString())
+                    operatorBox = operator
+                }
+            } else {
+                if(operator == "+"){
+                    val value = changeNum1 + changeNum2
+                    val format = decimalFormat.format(value)
+                    textViewInput?.setText(format)
+                    num1 = removeZeroAfterDot(value.toString())
+                    operatorBox = operator
+                }
+                if(operator == "-"){
+                    val value = changeNum1 - changeNum2
+                    val format = decimalFormat.format(value)
+                    textViewInput?.setText(format)
+                    num1 = removeZeroAfterDot(value.toString())
+                    operatorBox = operator
+                }
+                if(operator == "\u00d7"){
+                    val value = changeNum1 * changeNum2
+                    val format = decimalFormat.format(value)
+                    textViewInput?.setText(format)
+                    num1 = removeZeroAfterDot(value.toString())
+                    operatorBox = operator
+                }
+                if(operator == "\u00f7"){
+                    val value = changeNum1 / changeNum2
+                    val format = decimalFormat.format(value)
+                    textViewInput?.setText(format)
+                    num1 = removeZeroAfterDot(value.toString())
+                    operatorBox = operator
+                }
             }
         }
-    }
+        if(operatorBox!=""){
 
-    @SuppressLint("SetTextI18n")
-    fun onClear(view: View) {
-        // setButton
-        ButtonClean?.setText("AC")
-        // value
-        containerDigit = ""
-        // display
-        textViewInput?.setText("0")
-        // bool
-        haveDot = false
-        haveDigit = false
-        // condition
-
-    }
-
-
-    fun onPlusMinus(view: View) {
-        // calculate
-        val value = containerDigit.toDouble() * (-1)
-        // display & value
-        containerDigit = value.toString()
-        textViewInput?.setText(removeZeroAfterDot(value.toString()))
-    }
-
-    @SuppressLint("SetTextI18n")
-    fun onDecimalPoint(view: View) {
-        if (!containerDigit.contains(".") && containerDigit == "") {
-            // value
-            containerDigit += "0."
-            // display
-            textViewInput?.setText("0.")
-            // bool
-            haveDot = true
-        } else if (!containerDigit.contains(".")) {
-            // value
-            containerDigit += "."
-            // display
-            textViewInput?.setText(onFormat(containerDigit) + ".")
-            // bool
-            haveDot = true
         }
     }
-
-    fun onPercent(view: View) {
-        // calculate
-        val value = (containerDigit.toDouble() / 100).toString()
-        // display & value
-        containerDigit = value
-        textViewInput?.setText(value)
-    }
-
     fun onOperator(view: View) {
         operatorView = view
         operator = (operatorView as Button).getText().toString()
         haveOperator = true
+        editText = false
+        val fixOne = 1
+        // color button
         if(!secondOperator && firstOperator){
             operatorViewCheckTwo = operatorView
-            (operatorViewCheckTwo as Button).setTextColor(resources.getColor(R.color.orange))
-            operatorViewCheckTwo?.setBackgroundColor(Color.WHITE)
-            (operatorViewCheckOne as Button).setTextColor(Color.WHITE)
-            operatorViewCheckOne?.setBackgroundColor(resources.getColor(R.color.orange))
+            changeButtonOperatorTwo()
+            changeButtonOperatorOne()
             secondOperator = true
             firstOperator = false
         }
         if(!firstOperator && secondOperator){
             operatorViewCheckOne = operatorView
-            (operatorViewCheckOne as Button).setTextColor(resources.getColor(R.color.orange))
-            operatorViewCheckOne?.setBackgroundColor(Color.WHITE)
+            changeButtonOperatorOneUse()
             firstOperator = true
             secondOperator = false
         }
+        if(!checkFirst){
+            if(textViewInput?.getText().toString() !="0" && num1 == ""){
+                num1 = textViewInput?.getText().toString()
+                haveDigit = false
+            }
+            checkFirst = true
+        }
+    }
 
 
+    fun onClear(view: View) {
+        // condition
+        if(textViewInput?.getText()?.toString() == "0" && haveOperator){
+            changeButtonOperatorOne()
+            haveOperator = false
+            setZero()
+        }
+        if(textViewInput?.getText()?.toString() == "0" && !haveOperator){
+            setZero()
+        }
+        if(textViewInput?.getText()?.toString() != "0" && haveOperator){
+            ButtonClean?.setText("AC")
+            textViewInput?.setText("0")
+            setZero()
+        }
+        if(textViewInput?.getText()?.toString() != "0" && !haveOperator){
+            ButtonClean?.setText("AC")
+            textViewInput?.setText("0")
+            setZero()
+        }
+    }
 
+    fun onPlusMinus(view: View) {
+        if(haveDigit){
+            val value = textViewInput?.getText().toString().toDouble() * (-1)
+            textViewInput?.setText(removeZeroAfterDot(value.toString()))
+        }
+    }
 
+    fun onDecimalPoint(view: View) {
+        if(!textViewInput?.getText()?.toString()?.contains(".")!! && textViewInput?.getText()?.toString() == "0"){
+            textViewInput?.setText("0.")
+            haveDot = true
+            editText = false
+        } else if (!textViewInput?.getText()?.toString()?.contains(".")!!){
+            textViewInput?.append(".")
+            haveDot = true
+            editText = false
+        }
+    }
 
+    fun onPercent(view: View) {
+        if(haveDigit){
+            val value = (textViewInput?.getText()?.toString()?.toDouble()?.div(100)).toString()
+            textViewInput?.setText(value)
+        }
     }
 
     private fun onFormat(number: String): String {
         // set comma
         val changeType = number.toDouble()
-        val formattedNumber = decimalFormat.format(changeType)
+        val formattedNumber = decimalFormat?.format(changeType)
         // set zero
         val changeBack = formattedNumber.toString()
         if ('.' in changeBack) {
@@ -204,7 +363,6 @@ class MainActivity : AppCompatActivity(){
         }
         return number
     }
-
     private fun removeZeroAfterDot(result: String): String {
         var value = result
         if (result.contains(".0"))
@@ -212,90 +370,33 @@ class MainActivity : AppCompatActivity(){
         return value
     }
 
+    private fun changeButtonOperatorOne(){
+        (operatorViewCheckOne as Button).setTextColor(Color.WHITE)
+        operatorViewCheckOne?.setBackgroundColor(resources.getColor(R.color.orange))
+    }
+    private fun changeButtonOperatorTwo(){
+        (operatorViewCheckTwo as Button).setTextColor(resources.getColor(R.color.orange))
+        operatorViewCheckTwo?.setBackgroundColor(Color.WHITE)
+    }
+
+    private fun changeButtonOperatorOneUse(){
+        (operatorViewCheckOne as Button).setTextColor(resources.getColor(R.color.orange))
+        operatorViewCheckOne?.setBackgroundColor(Color.WHITE)
+    }
+
+    private fun setZero(){
+        operator = ""
+        firstOperator= false
+        secondOperator = true
+        editText = true
+        clearOne = 0
+        haveDot = false
+        num1=""
+        num2=""
+        checkFirst = false
+    }
+    companion object {
+        private const val SWIPE_THRESHOLD = 100
+        private const val SWIPE_VELOCITY_THRESHOLD = 100
+    }
 }
-
-//    private fun isOperatorAdded(value :String): Boolean{
-//        return if(value.startsWith("")){
-//            false
-//        } else{
-//            value.contains("\u00f7")|| value.contains("\u00d7") || value.contains("+") || value.contains("-")
-//        }
-//    }
-
-
-//}
-
-//    fun onEqual(view:View){
-//        second = tvInput!!.text.toString()
-//        if(lastNumeric){
-//            var prefix = ""
-//
-//            try {
-//                if(main.startsWith("-")){
-//                    prefix = "-"
-//                    main = main.substring(1)
-//                }
-//                if(oper == "-"){
-//                    if(prefix.isNotEmpty()){
-//                        main = prefix + main
-//                    }
-//                    tvInput?.text = removeZeroAfterDot((main.toDouble() - second.toDouble()).toString())
-//                }
-//                if(oper == "+"){
-//                    if(prefix.isNotEmpty()){
-//                        main = prefix + main
-//                    }
-//                    tvInput?.text = removeZeroAfterDot((main.toDouble() + second.toDouble()).toString())
-//                }
-//                if(oper == "\u00d7"){
-//                    if(prefix.isNotEmpty()){
-//                        main = prefix + main
-//                    }
-//                    tvInput?.text = removeZeroAfterDot((main.toDouble() * second.toDouble()).toString())
-//                }
-//                if(oper == "\u00f7"){
-//                    if(prefix.isNotEmpty()){
-//                        main = prefix + main
-//                    }
-//                    tvInput?.text = removeZeroAfterDot((main.toDouble() / second.toDouble()).toString())
-//                }
-//            }catch(e: ArithmeticException){
-//                e.printStackTrace()
-//            }
-//        }
-//    }
-//
-//
-//    fun onOperator(view:View){
-//        tvInput?.text?.let{
-//            if(firstInt){
-//                if(lastNumeric && !isOperatorAdded(it.toString())){
-//                    tempView = view
-//                    if (tempView is Button) {
-//                        (tempView as Button).setTextColor(resources.getColor(R.color.orange))
-//                        tempView?.setBackgroundColor(Color.WHITE)
-//                    }
-//                    lastNumeric = false
-//                    lastDot = false
-//                    checker = false
-//                    main = tvInput!!.text.toString()
-//                    oper = (tempView as Button).getText().toString()
-//                }
-//            } else {
-//                checkView = view
-//                var data = (checkView as Button).getText().toString()
-//                if( data == "-"){
-//                    tvInput?.append("-")
-//                }
-//                firstInt = true
-//            }
-//        }
-//    }
-//    private fun isOperatorAdded(value :String): Boolean{
-//        return if(value.startsWith("")){
-//            false
-//        } else{
-//            value.contains("\u00f7")|| value.contains("\u00d7") || value.contains("+") || value.contains("-")
-//        }
-//    }
-
