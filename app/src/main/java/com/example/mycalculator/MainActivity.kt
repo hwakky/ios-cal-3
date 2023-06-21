@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.mycalculator.databinding.ActivityMainBinding
 import java.text.DecimalFormat
 import kotlin.math.abs
+import java.math.BigDecimal
 
 class MainActivity : AppCompatActivity(){
     private var textViewInput: EditText? = null
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity(){
     // container
     var operator: String = ""
     var operatorBox: String =""
+    var operatorSec: String = ""
+    var operatorCal: String =""
     var num1: String = ""
     var num2: String = ""
     var backUpNum2: String = ""
@@ -41,8 +44,8 @@ class MainActivity : AppCompatActivity(){
     var editText: Boolean = true
     var checkFirst: Boolean = false
     // format
-    val decimalFormat = DecimalFormat("#,##0.00000000")
-
+//    val decimalFormat = DecimalFormat("#,##0.00000000")
+    val decimalFormat = DecimalFormat("#,###,###,##0.00000000")
     private val binding: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -162,13 +165,16 @@ class MainActivity : AppCompatActivity(){
 
     fun onDigit(view: View) {
         haveDigit = true
+//        onDigitView = View
         if(editText || haveOperator){
             textViewInput?.setText("")
         }
         if (!haveDot && textViewInput?.getText()?.length != 9) {
             if (haveDigit ) {
                 // contain input & display
+
                 textViewInput?.append((view as Button).text)
+
                 // setButton Clear
                 ButtonClean?.setText("C")
                 if(haveOperator){
@@ -203,7 +209,6 @@ class MainActivity : AppCompatActivity(){
             Log.e(TAG,num1)
         } else {
             num2 = backUpNum2
-            Log.e(TAG,"eiei")
         }
 
         if(num1 != "" && num2 != ""){
@@ -268,16 +273,29 @@ class MainActivity : AppCompatActivity(){
                 }
             }
         }
-        if(operatorBox!=""){
-
-        }
     }
-    fun onOperator(view: View) {
+
+        fun onOperator(view: View) {
         operatorView = view
         operator = (operatorView as Button).getText().toString()
+            if(textViewInput?.getText().toString() !="0" && num1 == ""){
+                num1 = textViewInput?.getText().toString()
+                operatorSec = operator
+            }
+            if(num1 != "" && textViewInput?.getText().toString() !=num1 ){
+                num2 = textViewInput?.getText().toString()
+                cal()
+            }
+            if(num1 != "" && textViewInput?.getText().toString() ==num1 && operatorSec != operator){
+                operatorSec = operator
+                Log.e(TAG,operator)
+                Log.e(TAG,"space")
+                Log.e(TAG,operatorSec)
+            }
+
+
         haveOperator = true
         editText = false
-        val fixOne = 1
         // color button
         if(!secondOperator && firstOperator){
             operatorViewCheckTwo = operatorView
@@ -292,22 +310,51 @@ class MainActivity : AppCompatActivity(){
             firstOperator = true
             secondOperator = false
         }
-        if(!checkFirst){
-            if(textViewInput?.getText().toString() !="0" && num1 == ""){
-                num1 = textViewInput?.getText().toString()
-                haveDigit = false
-            }
-            checkFirst = true
+
+    }
+    private fun cal(){
+        val changeNum1 = num1.toDouble()
+        val changeNum2 = num2.toDouble()
+        if(operatorSec == "+"){
+            val value = changeNum1 + changeNum2
+            textViewInput?.setText(removeZeroAfterDot(value.toString()))
+            num1 = removeZeroAfterDot(value.toString())
+            num2 = ""
+        }
+        if(operatorSec == "-"){
+            val value = changeNum1 - changeNum2
+            textViewInput?.setText(removeZeroAfterDot(value.toString()))
+            num1 = removeZeroAfterDot(value.toString())
+            num2=""
+        }
+        if(operator == "\u00d7"){
+            val value = changeNum1 * changeNum2
+            val number = BigDecimal(value)
+            val trimmedNumber = number.stripTrailingZeros()
+            textViewInput?.setText(trimmedNumber.toString())
+            num1 = removeZeroAfterDot(value.toString())
+            num2 = ""
+        }
+        if(operator == "\u00f7"){
+            val value = changeNum1 / changeNum2
+            val format = decimalFormat.format(value)
+            textViewInput?.setText(format)
+            num1 = removeZeroAfterDot(value.toString())
+            num2 = ""
         }
     }
-
 
     fun onClear(view: View) {
         // condition
         if(textViewInput?.getText()?.toString() == "0" && haveOperator){
-            changeButtonOperatorOne()
             haveOperator = false
             setZero()
+            changeButtonOperatorOne()
+        }
+        if(textViewInput?.getText()?.toString() == "" && haveOperator){
+            haveOperator = false
+            setZero()
+            changeButtonOperatorOne()
         }
         if(textViewInput?.getText()?.toString() == "0" && !haveOperator){
             setZero()
@@ -350,19 +397,20 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-    private fun onFormat(number: String): String {
-        // set comma
-        val changeType = number.toDouble()
-        val formattedNumber = decimalFormat?.format(changeType)
-        // set zero
-        val changeBack = formattedNumber.toString()
-        if ('.' in changeBack) {
-            // Remove trailing zeros
-            val trimmedStr = changeBack.trimEnd('0').trimEnd('.')
-            return trimmedStr
-        }
-        return number
-    }
+
+//    private fun onFormat(number: String): String {
+//        // set comma
+//        val changeType = number.toDouble()
+//        val formattedNumber = decimalFormat?.format(changeType)
+//        // set zero
+//        val changeBack = formattedNumber.toString()
+//        if ('.' in changeBack) {
+//            // Remove trailing zeros
+//            val trimmedStr = changeBack.trimEnd('0').trimEnd('.')
+//            return trimmedStr
+//        }
+//        return number
+//    }
     private fun removeZeroAfterDot(result: String): String {
         var value = result
         if (result.contains(".0"))
@@ -394,9 +442,71 @@ class MainActivity : AppCompatActivity(){
         num1=""
         num2=""
         checkFirst = false
+        haveDigit = false
     }
+
     companion object {
         private const val SWIPE_THRESHOLD = 100
         private const val SWIPE_VELOCITY_THRESHOLD = 100
     }
 }
+
+//    fun onOperator(view: View) {
+//        operatorView = view
+//        operator = (operatorView as Button).getText().toString()
+//        haveOperator = true
+//        editText = false
+//        // color button
+//        if(!secondOperator && firstOperator){
+//            operatorViewCheckTwo = operatorView
+//            changeButtonOperatorTwo()
+//            changeButtonOperatorOne()
+//            secondOperator = true
+//            firstOperator = false
+//        }
+//        if(!firstOperator && secondOperator){
+//            operatorViewCheckOne = operatorView
+//            changeButtonOperatorOneUse()
+//            firstOperator = true
+//            secondOperator = false
+//        }
+//        if(checkFirst){
+//
+//
+////            if(operatorSec != "" && operator != operatorSec){
+////                operator = operatorSec
+////                Log.e(TAG,"not equal")
+////            }
+////            if(operatorSec != "" && operator == operatorSec){
+////                Log.e(TAG,"equal")
+////            }
+////            if(operatorSec == ""){
+////                operatorSec = operator
+////                operatorCal = operator
+////                Log.e(TAG,"step1")
+////            }
+////            if(operatorSec == ""){
+////                operatorSec = operator
+////            }
+//
+//            num2 = textViewInput?.getText().toString()
+//            if(operatorSec != operator){
+//                operatorSec = operator
+//                operatorCal
+//                delay()
+//                num2=""
+//                operatorSec=""
+//            } else {
+//                delay()
+//                operatorSec=""
+//            }
+//
+//        } else {
+//            if(textViewInput?.getText().toString() !="0" && num1 == ""){
+//                num1 = textViewInput?.getText().toString()
+//                haveDigit = false
+//            }
+//            checkFirst = true
+//        }
+//
+//    }
